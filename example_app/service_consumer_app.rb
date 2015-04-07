@@ -1,5 +1,4 @@
 require 'sinatra/base'
-require 'json'
 require 'rack-flash'
 require 'cf-app-utils'
 
@@ -47,10 +46,6 @@ class ServiceConsumerApp < Sinatra::Base
 
   def vcap_application
     ENV["VCAP_APPLICATION"]
-  end
-
-  def application_name
-    JSON.parse(vcap_application).fetch("application_name")
   end
 
   def bindings_exist
