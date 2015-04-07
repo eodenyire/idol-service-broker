@@ -70,6 +70,7 @@ DEPENDENCIES
   capybara
   capybara_minitest_spec
   cf-app-utils
+  minitest
   mocha
   octokit
   pry
