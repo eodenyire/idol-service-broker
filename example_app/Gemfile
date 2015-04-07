@@ -9,7 +9,6 @@ gem 'rake'
 group :test do
   gem 'minitest'
   gem 'rack-test'
-  gem 'mocha', require: false
   gem 'rerun'
   gem 'capybara'
   gem 'capybara_minitest_spec'

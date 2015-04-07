@@ -17,13 +17,10 @@ GEM
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
-    metaclass (0.0.1)
     method_source (0.8.2)
     mime-types (2.0)
     mini_portile (0.5.2)
     minitest (5.2.1)
-    mocha (0.14.0)
-      metaclass (~> 0.0.1)
     nokogiri (1.6.1)
       mini_portile (~> 0.5.0)
     pry (0.9.12.4)
@@ -62,7 +59,6 @@ DEPENDENCIES
   capybara_minitest_spec
   cf-app-utils
   minitest
-  mocha
   pry
   rack-flash3
   rack-test

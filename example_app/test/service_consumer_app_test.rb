@@ -17,7 +17,7 @@ describe "GET /" do
 
   before do
     @vcap_services_value = "{}"
-    ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
+    ENV["VCAP_SERVICES"] = @vcap_services_value
     CF::App::Service.instance_variable_set :@services, nil
   end
 
@@ -53,7 +53,7 @@ describe "GET /" do
         ]
       }
 JSON
-      ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
+      ENV["VCAP_SERVICES"] = @vcap_services_value
       CF::App::Service.instance_variable_set :@services, nil
     end
 
@@ -86,8 +86,8 @@ describe "GET /env" do
         "other":"values"
       }
 JSON
-    ENV.stubs(:[]).with("VCAP_APPLICATION").returns(@vcap_application_value)
-    ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
+    ENV["VCAP_APPLICATION"] = @vcap_application_value
+    ENV["VCAP_SERVICES"]    = @vcap_services_value
     CF::App::Service.instance_variable_set :@services, nil
   end
 
@@ -118,7 +118,7 @@ JSON
       }
       JSON
 
-      ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
+      ENV["VCAP_SERVICES"] = @vcap_services_value
       CF::App::Service.instance_variable_set :@services, nil
       make_request
     end
@@ -138,22 +138,21 @@ JSON
 
   describe "when an instance of a different service is bound to the app" do
     before do
-      @vcap_services_value = <<JSON
-      {
-        "cleardb": [
-          {
-            "name": "cleardb-1",
-            "label": "cleardb-n/a",
-            "plan": "spark",
-            "credentials": {
-               "password": "topsecret"
+      @vcap_services_value = <<-JSON
+        {
+          "cleardb": [
+            {
+              "name": "cleardb-1",
+              "label": "cleardb-n/a",
+              "plan": "spark",
+              "credentials": {
+                 "password": "topsecret"
+              }
             }
-          }
-        ]
-      }
-JSON
-
-      ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
+          ]
+        }
+      JSON
+      ENV["VCAP_SERVICES"] = @vcap_services_value
 
       make_request
     end
