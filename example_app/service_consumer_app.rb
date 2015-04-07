@@ -2,7 +2,6 @@ require 'sinatra'
 require 'json'
 require 'rack-flash'
 require 'cf-app-utils'
-require_relative 'github_repo_helper'
 
 class ServiceConsumerApp < Sinatra::Base
 
@@ -12,9 +11,11 @@ class ServiceConsumerApp < Sinatra::Base
 
   #declare the routes used by the app
   get "/" do
-    repo_uris = credentials_of_all_repos.map { |c| c["uri"] } if bindings_exist
-
-    erb :index, locals: {repo_uris: repo_uris, messages: messages}
+    if bindings_exist
+      erb :index
+    else
+      warn_of_missing_binding
+    end
   end
 
   get "/env" do
@@ -22,34 +23,22 @@ class ServiceConsumerApp < Sinatra::Base
 
     response_body = "VCAP_SERVICES = \n#{vcap_services}\n\n"
     response_body << "VCAP_APPLICATION = \n#{vcap_application}\n\n"
-    response_body << messages
+    response_body << warn_of_missing_binding unless bindings_exist
     response_body
-  end
-
-  post "/create_commit" do
-    github_repo_helper = GithubRepoHelper.new(credentials_of_all_repos)
-    repo_uri = params[:repo_uri]
-
-    begin
-      github_repo_helper.create_commit(repo_uri, application_name)
-      flash[:notice] = "Successfully pushed commit to #{repo_uri}"
-    rescue GithubRepoHelper::RepoCredentialsMissingError
-      flash[:notice] = "Unable to create the commit, repo credentials in VCAP_SERVICES are missing or invalid for: #{repo_uri}"
-    rescue GithubRepoHelper::CreateCommitError => e
-      flash[:notice] = "Creating the commit failed. Log contents:\n#{e.message}"
-    end
-
-    redirect "/"
   end
 
   # helper methods
   private
 
-  def messages
-    result = ""
-    result << "#{no_bindings_exist_message}" unless bindings_exist
-    result << "\n\nAfter binding or unbinding any service instances, restart this application with 'cf restart [appname]'."
-    result
+  def warn_of_missing_binding
+    <<-HTML.gsub(/^\s+|/, '')
+      | <h1>Missing Service</h1>
+      | <p>
+      |   You haven't bound any instances of the idol-api service.
+      |   After binding or unbinding any service instances, restart this
+      |   application with 'cf restart [appname]'
+      | </p>
+    HTML
   end
 
   def vcap_services
@@ -68,12 +57,8 @@ class ServiceConsumerApp < Sinatra::Base
     !(credentials_of_all_repos.empty?)
   end
 
-  def no_bindings_exist_message
-    "\n\nYou haven't bound any instances of the #{service_name} service."
-  end
-
   def service_name
-    "github-repo"
+    "idol-api"
   end
 
   def credentials_of_all_repos

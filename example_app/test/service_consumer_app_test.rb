@@ -7,7 +7,7 @@ def app
 end
 
 def service_name
-  "github-repo"
+  "idol-api"
 end
 
 describe "GET /" do
@@ -41,27 +41,13 @@ describe "GET /" do
     before do
       @vcap_services_value = <<JSON
       {
-        "github-repo": [
+        "idol-api": [
           {
-            "name": "github-repo-1",
-            "label": "github-repo-n/a",
+            "name": "extracttext",
+            "label": "idol-api",
             "plan": "public",
             "credentials": {
-              "name": "hello-world",
-              "uri": "https://github.com/octocat/hello-world",
-              "ssh_url": "git@github.com:octocat/hello-world.git",
-              "private_key": "-----BEGIN RSA PRIVATE KEY-----\\nZZZ\\n-----END RSA PRIVATE KEY-----\\n"
-            }
-          },
-          {
-            "name": "github-repo-2",
-            "label": "github-repo-n/a",
-            "plan": "public",
-            "credentials": {
-              "name": "happy-times",
-              "uri": "https://github.com/octocat/happy-times",
-              "ssh_url": "git@github.com:octocat/happy-times.git",
-              "private_key": "-----BEGIN RSA PRIVATE KEY-----\\nYYY\\n-----END RSA PRIVATE KEY-----\\n"
+              "apikey": "long-string-with-dashes"
             }
           }
         ]
@@ -78,18 +64,10 @@ JSON
       last_response.body.wont_match /You haven't bound any instances of the #{service_name} service/
     end
 
-    it "binding - displays the repo URL for each bound instance" do
+    it "displays a form to submit an URL to the API" do
       make_request
 
-      expected_link = <<HTML
-<a href="https://github.com/octocat/hello-world">https://github.com/octocat/hello-world</a>
-HTML
-      last_response.body.must_include expected_link.strip
-
-      expected_link = <<HTML
-<a href="https://github.com/octocat/happy-times">https://github.com/octocat/happy-times</a>
-HTML
-      last_response.body.must_include expected_link.strip
+      last_response.body.must_match /<form>/
     end
 
   end
@@ -125,20 +103,20 @@ JSON
 
   describe "when an instance of the service is bound to the app" do
     before do
-      @vcap_services_value = <<JSON
+      @vcap_services_value = <<-JSON
       {
-        "github-repo": [
+        "idol-api": [
           {
-            "name": "github-repo-1",
-            "label": "github-repo-n/a",
+            "name": "extracttext",
+            "label": "idol-api",
             "plan": "public",
             "credentials": {
-              "password": "topsecret"
+              "apikey": "long-string-with-dashes"
             }
           }
         ]
       }
-JSON
+      JSON
 
       ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
       CF::App::Service.instance_variable_set :@services, nil
@@ -204,125 +182,6 @@ JSON
       make_request
 
       last_response.body.must_match /VCAP_SERVICES = \n\{}/
-    end
-  end
-end
-
-describe "POST /create_commit" do
-  def make_request
-    post "/create_commit", repo_uri: @repo_uri
-  end
-
-  def flash
-    last_request.env['x-rack.flash']
-  end
-
-  before do
-    @application_name = "service-consumer-application"
-    @repo_uri = "http://fake.github.com/some-user/some-repo"
-    @vcap_services_value = <<JSON
-      {
-        "github-repo": [
-          {
-            "name": "github-repo-1",
-            "label": "github-repo-n/a",
-            "plan": "public",
-            "credentials": {
-              "password": "topsecret",
-              "uri": "#{@repo_uri}"
-            }
-          },
-          {
-            "name": "github-repo-2",
-            "label": "github-repo-n/a",
-            "plan": "public",
-            "credentials": {
-              "password": "also-very-secret",
-              "uri": "uri-of-the-other-repo"
-            }
-          }
-        ]
-      }
-JSON
-
-    @vcap_application_value = <<JSON
-      {
-        "application_name":"#{@application_name}",
-        "other":"values"
-      }
-JSON
-
-    all_credentials = [
-        {
-            "password" => "topsecret",
-            "uri" => @repo_uri
-        },
-        {
-            "password" => "also-very-secret",
-            "uri" => "uri-of-the-other-repo"
-        }
-    ]
-
-    ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
-    ENV.stubs(:[]).with("VCAP_APPLICATION").returns(@vcap_application_value)
-    CF::App::Service.instance_variable_set :@services, nil
-
-    @fake_github_repo_helper = mock
-    GithubRepoHelper.expects(:new).with(all_credentials).returns(@fake_github_repo_helper)
-    @fake_github_repo_helper.stubs(:create_commit)
-  end
-
-  it "calls GithubRepoHelper#create_commit with the repo URI and application name" do
-    @fake_github_repo_helper.expects(:create_commit).with(@repo_uri, @application_name)
-
-    make_request
-  end
-
-  it "redirects to the index page" do
-    make_request
-
-    last_response.must_be :redirect?
-    follow_redirect!
-    last_request.path.must_equal "/"
-  end
-
-  describe "when creating the commit succeeds" do
-    it "shows a success message in the flash" do
-      make_request
-
-      follow_redirect!
-      flash.wont_be_nil
-      assert last_response.body.must_include Rack::Utils.escape_html("Successfully pushed commit to #{@repo_uri}")
-    end
-  end
-
-  describe "when creating the commit fails" do
-    describe "because the repo credentials are missing" do
-      before do
-        @fake_github_repo_helper.stubs(:create_commit).raises(GithubRepoHelper::RepoCredentialsMissingError)
-      end
-
-      it "redirects to the index page with the error message in the flash" do
-        make_request
-
-        follow_redirect!
-        flash.wont_be_nil
-        assert last_response.body.must_include Rack::Utils.escape_html("Unable to create the commit, repo credentials in VCAP_SERVICES are missing or invalid for: #{@repo_uri}")
-      end
-    end
-
-    describe "for any other reason" do
-      before do
-        @fake_github_repo_helper.stubs(:create_commit).raises(GithubRepoHelper::CreateCommitError.new("error message 1\nerror message 2"))
-      end
-
-      it "redirects to the index page with the error message in the flash" do
-        make_request
-
-        follow_redirect!
-        flash.wont_be_nil
-        assert last_response.body.must_include Rack::Utils.escape_html("Creating the commit failed. Log contents:\nerror message 1\nerror message 2")
-      end
     end
   end
 end
