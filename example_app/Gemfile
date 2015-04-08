@@ -5,6 +5,7 @@ gem 'sinatra'
 gem 'rack-flash3'
 gem 'cf-app-utils'
 gem 'rake'
+gem 'httparty'
 
 group :test do
   gem 'minitest'

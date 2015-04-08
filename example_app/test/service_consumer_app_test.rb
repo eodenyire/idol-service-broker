@@ -39,6 +39,7 @@ describe "GET /" do
 
   describe "when there are service instances are bound to the app" do
     before do
+      apikey = File.read('apikey') rescue skip
       @vcap_services_value = <<JSON
       {
         "idol-api": [
@@ -47,7 +48,7 @@ describe "GET /" do
             "label": "idol-api",
             "plan": "public",
             "credentials": {
-              "apikey": "long-string-with-dashes"
+              "apikey": "#{ apikey.chop }"
             }
           }
         ]
@@ -70,7 +71,20 @@ JSON
       last_response.body.must_match /<form>/
     end
 
+    describe "with an input-url" do
+
+      it "show the IDOL response" do
+        get "/", 'input-url': 'https://www.idolondemand.com/sample-content/documents/IDOLbrochure.pdf'
+        assert last_response.match('Next-generation information analytics'),
+          "##title is not here:\n#{ last_response.body }"
+        assert last_response.match('Brochure Next-generation information'),
+          'get the body'
+      end
+
+    end
+
   end
+
 end
 
 describe "GET /env" do

@@ -1,11 +1,13 @@
 require 'sinatra/base'
 require 'cf-app-utils'
+require_relative 'idol'
 
 class ServiceConsumerApp < Sinatra::Base
 
   #declare the routes used by the app
   get "/" do
     if bindings_exist
+      @results = Idol.extract_text params['input-url'] if params['input-url']
       erb :index
     else
       warn_of_missing_binding
