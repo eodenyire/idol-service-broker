@@ -15,5 +15,4 @@ WebMock.disable_net_connect!(allow: 'codeclimate.com')
 
 SETTINGS_FILENAME = "test/config/settings.yml"
 
-require File.expand_path '../../service_broker_app.rb', __FILE__
-require File.expand_path '../../github_service_helper.rb', __FILE__
+require_relative '../service_broker_app.rb'
