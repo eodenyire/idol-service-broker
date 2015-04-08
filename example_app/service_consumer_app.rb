@@ -1,12 +1,7 @@
 require 'sinatra/base'
-require 'rack-flash'
 require 'cf-app-utils'
 
 class ServiceConsumerApp < Sinatra::Base
-
-  # app configuration
-  enable :sessions
-  use Rack::Flash, :sweep => true
 
   #declare the routes used by the app
   get "/" do
@@ -30,7 +25,7 @@ class ServiceConsumerApp < Sinatra::Base
   private
 
   def warn_of_missing_binding
-    <<-HTML.gsub(/^\s+|/, '')
+    <<-HTML.gsub(/^\s+\|/, '')
       | <h1>Missing Service</h1>
       | <p>
       |   You haven't bound any instances of the idol-api service.
@@ -49,15 +44,12 @@ class ServiceConsumerApp < Sinatra::Base
   end
 
   def bindings_exist
-    !(credentials_of_all_repos.empty?)
+    vcap_services &&
+      !(CF::App::Credentials.find_all_by_service_label(service_name).empty?)
   end
 
   def service_name
     "idol-api"
-  end
-
-  def credentials_of_all_repos
-    CF::App::Credentials.find_all_by_service_label(service_name)
   end
 
 end
