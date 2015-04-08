@@ -2,7 +2,8 @@
 
 <form>
   <label for="input-url">URL</label>
-  <input name="input-url" placeholder="The URL of the document" type="url" required autofocus>
+  <input name="input-url" placeholder="The URL of the document" type="url"
+         value="<%= params['input-url'] %>" required autofocus>
   <input name="submit" type="submit" value="Submit">
 </form>
 
