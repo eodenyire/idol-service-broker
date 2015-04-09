@@ -1,2 +1,12 @@
 language: ruby
-script: bash ci.sh
+rvm:
+  - 2.2.0
+install:
+  - bundle install --jobs=3 --retry=3 --gemfile=example_app/Gemfile
+  - bundle install --jobs=3 --retry=3 --gemfile=service_broker/Gemfile
+script:
+  - cd service_broker && bundle exec rake test; cd -
+  - cd example_app && bundle exec rake test; cd -
+cache:
+  directories:
+    - vendor/bundle
