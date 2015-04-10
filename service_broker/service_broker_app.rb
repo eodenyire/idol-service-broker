@@ -52,8 +52,7 @@ class ServiceBrokerApp < Sinatra::Base
   private
 
   def self.app_settings
-    settings_filename = defined?(SETTINGS_FILENAME) ? SETTINGS_FILENAME : 'config/settings.yml'
-    @app_settings ||= YAML.load_file(settings_filename)
+    @app_settings ||= YAML.load_file 'config/settings.yml'
   end
 
 end

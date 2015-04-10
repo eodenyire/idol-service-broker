@@ -38,4 +38,4 @@ basic_auth:
 
 # credentials for IDOL OnDemand API
 idol:
-  apikey: #<your-idol-apikey>
+  apikey: a-test-key
