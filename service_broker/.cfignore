@@ -1,5 +1,6 @@
 # files of the following types are ignored when pushing to Cloud Foundry
-# see http://docs.cloudfoundry.com/docs/using/deploying-apps/
+# see http://docs.cloudfoundry.org/devguide/deploy-apps/prepare-to-deploy.html#exclude
 
 /.idea
 /test
+/.gs/

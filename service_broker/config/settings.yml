@@ -1,30 +1,35 @@
 catalog:
   services: # catalog must advertise at least one service
-    - id: 5085f1cb-e093-4630-8795-843b76018eb8
-      name: github-repo
-      description: Provides read and write access to a GitHub repository.
+    - id: D11D0A3C-DFA0-11E4-83C4-B11A9580656B
+      name: extracttext
+      description: >
+        The Text Extraction API uses HP KeyView to extract metadata and text
+        content from a file that you provide.
       bindable: true
       tags:
-        - github
+        - hp
+        - text extraction
+        - idol
       metadata:
-        displayName: GitHub Repo
-        imageUrl: https://raw2.github.com/github/media/master/octocats/blacktocat-32.png
-        longDescription: The service creates repos under the configured GitHub organization. Binding an app creates a deploy key for the repo that the example app uses to make commits to the repo.
-        providerDisplayName: GitHub
-        documentationUrl: https://github.com/cloudfoundry-samples/github-service-broker-ruby
-        supportUrl: https://github.com/cloudfoundry-samples/github-service-broker-ruby
+        displayName: Text Extraction from
+        imageUrl: https://s3.amazonaws.com/azuqua_static/images/page-channel-hub/icon-hp-idol-ondemand.png
+        longDescription: >
+          The service analize the file and returns info about it and full text.
+        providerDisplayName: IDOL OnDemand
+        documentationUrl: https://github.com/eloyesp/idol-service-broker
+        supportUrl: https://github.com/eloyesp/idol-service-broker
       plans: # a service has one or more plans
-        - id: c05855e7-a55d-4ba1-b462-7579df7514f4
-          name: public
-          description: All repositories are public
+        - id: D9212B0A-DFA0-11E4-AAF9-B11A9580656B
+          name: test
+          description: For test only
           metadata:
             bullets:
-              - Repos are public
+              - For test only
             costs:
               - amount:
                   usd: 0.0
                 unit: MONTHLY
-            displayName: Public
+            displayName: Test
 
 # credentials for Cloud Controller to authenticate with the broker
 basic_auth:
