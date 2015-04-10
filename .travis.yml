@@ -1,12 +1,15 @@
 language: ruby
 rvm:
   - 2.2.0
+env:
+  global:
+    - GEM_HOME=$HOME/gems
 install:
-  - bundle install --jobs=3 --retry=3 --gemfile=example_app/Gemfile
-  - bundle install --jobs=3 --retry=3 --gemfile=service_broker/Gemfile
+  - bundle install --jobs=3 --retry=3 --gemfile=example_app/Gemfile --path $GEM_HOME
+  - bundle install --jobs=3 --retry=3 --gemfile=service_broker/Gemfile --path $GEM_HOME
 script:
   - cd service_broker && bundle exec rake test; cd -
   - cd example_app && bundle exec rake test; cd -
 cache:
   directories:
-    - vendor/bundle
+    - $HOME/gems
