@@ -5,22 +5,23 @@ catalog:
       description: >
         The Text Extraction API uses HP KeyView to extract metadata and text
         content from a file that you provide.
-      bindable: true
+      bindable: false
       tags:
         - hp
         - text extraction
         - idol
       metadata:
-        displayName: Text Extraction from
+        displayName: HP IDOL Text Extraction
         imageUrl: https://s3.amazonaws.com/azuqua_static/images/page-channel-hub/icon-hp-idol-ondemand.png
         longDescription: >
-          The service analize the file and returns info about it and full text.
-        providerDisplayName: IDOL OnDemand
-        documentationUrl: https://github.com/eloyesp/idol-service-broker
-        supportUrl: https://github.com/eloyesp/idol-service-broker
+          The Text Extraction API uses HP KeyView to extract metadata and text content from a file that you provide.
+          The API can handle over 500 different file formats.
+        providerDisplayName: HP IDOL OnDemand - Text Extraction
+        documentationUrl: http://www.idolondemand.com/developer/apis/extracttext
+        supportUrl: https://github.com/Altoros/idol-service-broker
       plans: # a service has one or more plans
         - id: D9212B0A-DFA0-11E4-AAF9-B11A9580656B
-          name: test
+          name: try
           description: For test only
           metadata:
             bullets:
@@ -29,7 +30,7 @@ catalog:
               - amount:
                   usd: 0.0
                 unit: MONTHLY
-            displayName: Test
+            displayName: Try
 
 # credentials for Cloud Controller to authenticate with the broker
 basic_auth:
