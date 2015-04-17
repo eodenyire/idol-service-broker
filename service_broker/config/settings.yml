@@ -5,7 +5,7 @@ catalog:
       description: >
         The Text Extraction API uses HP KeyView to extract metadata and text
         content from a file that you provide.
-      bindable: false
+      bindable: true
       tags:
         - hp
         - text extraction
