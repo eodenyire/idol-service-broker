@@ -7,7 +7,7 @@ class Idol
 
   def self.extract_text url
     get '/extracttext/v1', query: {
-      'apikey' => CF::App::Credentials.find_by_service_name('extracttext')['apikey'],
+      'apikey' => CF::App::Credentials.find_by_service_label('extracttext')['apikey'],
       'url'    => url
     }
   end

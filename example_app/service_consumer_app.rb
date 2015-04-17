@@ -51,7 +51,7 @@ class ServiceConsumerApp < Sinatra::Base
   end
 
   def service_name
-    "idol-api"
+    "extracttext"
   end
 
 end

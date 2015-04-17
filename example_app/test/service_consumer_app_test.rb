@@ -42,10 +42,10 @@ describe "GET /" do
       apikey = File.read('apikey') rescue skip
       @vcap_services_value = <<JSON
       {
-        "idol-api": [
+        "extracttext": [
           {
-            "name": "extracttext",
-            "label": "idol-api",
+            "name": "idol-api",
+            "label": "extracttext",
             "plan": "public",
             "credentials": {
               "apikey": "#{ apikey.chop }"
@@ -119,10 +119,10 @@ JSON
     before do
       @vcap_services_value = <<-JSON
       {
-        "idol-api": [
+        "extracttext": [
           {
-            "name": "extracttext",
-            "label": "idol-api",
+            "name": "idol-api",
+            "label": "extracttext",
             "plan": "public",
             "credentials": {
               "apikey": "long-string-with-dashes"
