@@ -1,0 +1,9 @@
+---
+applications:
+- name: idol-sample-consumer
+  memory: 128M
+  instances: 1
+  host: idol-sample-consumer
+  domain: cf.altoros.com
+  services:
+    - idol-extracttext-sample

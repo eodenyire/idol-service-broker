@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/eloyesp/idol-service-broker.svg)](https://travis-ci.org/eloyesp/idol-service-broker)
-
 IDOL service broker
 ===================
 
@@ -7,7 +5,8 @@ This repo contains two [Sinatra][] applications, a [service broker][] for the
 IDOL API and an example app which can use instances of the service advertised
 by the broker.
 
-The IDOL API credentials should be added to the `config/settings.yml`.
+The IDOL API credentials needs to be added to the `config/settings.yml` before
+you deploy.
 
 ### Deploying the Service Broker
 
@@ -25,13 +24,16 @@ cd idol-service-broker/service_broker
 $EDITOR config/settings.yml
 
 # push the service broker
-cf push idol-api-service-broker # fix this line
+cf push
 
 # register the service broker
-cf create-service-broker idol-api user password http://idol-api-service-broker.example.com/
+cf create-service-broker idol admin password http://idol-service-broker.cf.altoros.com/
 
 # make the service plan public
-cf enable-service-access idol-api
+cf enable-service-access idol
+
+# and create an instance
+cf create-service idol try idol-extracttext-sample
 ```
 
 Example application
@@ -48,15 +50,14 @@ With `cf`:
 
 ```
 cd idol-service-broker/example_app/
-cf push idol-sample-consumer
-cf create-service idol-api-1 --plan public 
-cf bind-service idol-api-1 idol-sample-consumer
-cf restart idol-sample-consumer
+cf push
 ```
 
-Point your web browser at `http://idol-sample-consumer.example.com` and you
+The binding should be automatic with the manifest provided.
+
+Point your web browser at `http://idol-sample-consumer.cf.altoros.com` and you
 should see the example app's interface. If the app has not been bound to
-a service instance of the github-repo service, you will see a meaningful error.
+a service instance, you will see a meaningful error.
 
   [Sinatra]: https://github.com/sinatra/sinatra
   [service broker]: http://docs.cloudfoundry.org/services/api.html

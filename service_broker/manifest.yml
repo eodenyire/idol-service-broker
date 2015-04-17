@@ -1,0 +1,7 @@
+---
+applications:
+- name: idol-service-broker
+  memory: 128M
+  instances: 1
+  host: idol-service-broker
+  domain: cf.altoros.com
