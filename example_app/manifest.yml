@@ -5,5 +5,4 @@ applications:
   instances: 1
   host: idol-sample-consumer
   domain: cf.altoros.com
-  services:
-    - idol-extracttext-sample
+  buildpack: https://github.com/cloudfoundry/ruby-buildpack.git
